@@ -30,7 +30,7 @@ bool Matchmaking::removePlayer(int id){
         if(players[i].getId() == id){
 
             for(int j = i; j < size - 1; j++){
-                players[j] = players[j+1];
+                players[j] = players[j+1]; // movendo os jogadores a frente do jogador retirado uma posição para trás
             }
             size --;
             return true;
@@ -50,10 +50,21 @@ void Matchmaking::sortByScoreInsertion(){
         current = players[i];                     
         j = i - 1;                             
 
-        while(j >= 0 && (players[j].getScore() > current.getScore() || 
-        (players[j].getScore() == current.getScore() && players[j].getTimestamp() > current.getTimestamp()))) {  
+        while(j >= 0) {  
 
-            players[j+1] = players[j];                 
+            // quando o score é maior
+            if (players[j].getScore() > current.getScore()) {
+                players[j+1] = players[j];
+            }
+            // quando o score é igual, mas muda o timestamp
+            else if (players[j].getScore() == current.getScore() && players[j].getTimestamp() > current.getTimestamp()) {
+                players[j+1] = players[j];
+            }
+
+            else {
+                break;
+            }
+
             j = j - 1;                         
         }
 
@@ -70,13 +81,21 @@ Player* Matchmaking::merge(Player arr1[], int n, Player arr2[], int m) {
 
     while(i < n && j < m) {
 
-        if(arr1[i].getScore() < arr2[j].getScore() ||
-    (arr1[i].getScore() == arr2[j].getScore() && arr1[i].getTimestamp() <= arr2[j].getTimestamp())) {
+        // quando o score do primeiro é menor
+        if(arr1[i].getScore() < arr2[j].getScore()) {
 
             mArr[i + j] = arr1[i];
             i++;
 
-        } else {
+        } 
+
+        // scores iguais, mas timestamp do primeiro é menor
+        else if(arr1[i].getScore() == arr2[j].getScore() && arr1[i].getTimestamp() <= arr2[j].getTimestamp()){
+
+            mArr[i + j] = arr1[i];
+            i++;
+  
+        } else { // score de arr2 é menor ou timestamp de arr2 é menor
 
             mArr[i + j] = arr2[j];
             j++;
@@ -100,21 +119,16 @@ Player* Matchmaking::merge(Player arr1[], int n, Player arr2[], int m) {
 
 Player* Matchmaking::mergeSort(Player arr[], int n) {
 
-    if(n <= 1) {
+    if(n == 1) {
 
-    Player* player = new Player[n];
-
-    if(n == 1){
+        Player* player = new Player[1];
         player[0] = arr[0];
-    }
-
-    return player;
+        return player;
     }
 
     int mid = n / 2;
 
     Player* left = mergeSort(arr, mid);
-
     Player* right = mergeSort(arr + mid, n - mid);
 
     Player* sorted = merge(left, mid, right, n - mid);
