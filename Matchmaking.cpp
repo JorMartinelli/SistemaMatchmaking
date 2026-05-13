@@ -3,11 +3,14 @@
 #include <iostream>
 #include "Matchmaking.hpp"
 
-Matchmaking::Matchmaking(){
+Matchmaking::Matchmaking() {
     size = 0;
+    players = new Player[MAX_PLAYERS];
 }
 
-Matchmaking::~Matchmaking(){}
+Matchmaking::~Matchmaking() {
+    delete[] players;
+}
 
 bool Matchmaking::insert(Player player){
 
@@ -119,10 +122,14 @@ Player* Matchmaking::merge(Player arr1[], int n, Player arr2[], int m) {
 
 Player* Matchmaking::mergeSort(Player arr[], int n) {
 
-    if(n == 1) {
+    if(n <= 1) {
 
-        Player* player = new Player[1];
-        player[0] = arr[0];
+        Player* player = new Player[n];
+
+        if(n == 1){
+            player[0] = arr[0];
+        }
+
         return player;
     }
 
